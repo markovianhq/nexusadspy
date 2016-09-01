@@ -17,9 +17,9 @@ Install the latest release from PyPI:
 
     $ pip install nexusadspy
 
-To install the latest `devel` branch commit of nexusadspy:
+To install the latest `master` branch commit of nexusadspy:
 
-    $ pip install -e git+git@github.com:markovianhq/nexusadspy.git@devel#egg=nexusadspy
+    $ pip install -e git+git@github.com:markovianhq/nexusadspy.git@master#egg=nexusadspy
 
 To install a specific commit, e.g. `97c41e9`:
 
