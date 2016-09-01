@@ -30,10 +30,10 @@ logging.basicConfig(level=logging.INFO)
 
 
 class AppnexusClient:
-    endpoint = 'https://api.appnexus.com'
 
-    def __init__(self, path):
+    def __init__(self, path, endpoint='https://api.appnexus.com'):
         self.path = path
+        self.endpoint = endpoint
         self.logger = logging.getLogger('AppnexusClient')
 
     def request(self, service, method, params=None, data=None, headers=None,
