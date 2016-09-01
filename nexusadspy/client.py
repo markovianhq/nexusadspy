@@ -212,6 +212,8 @@ class AppnexusClient:
         url = urljoin(base=self.endpoint, url='auth')
 
         r_code, r = self._do_throttled_request(url, 'post', data=data, headers=headers)
+        self._check_response(r_code, r)
+
         token = r['token']
 
         return token
