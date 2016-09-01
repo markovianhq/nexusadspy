@@ -2,9 +2,56 @@
 
 A thin Python wrapper on top of the Appnexus API.
 
+See usage examples below!
+
+## Status
+
+[![PyPI version](https://badge.fury.io/py/nexusadspy.svg)](https://badge.fury.io/py/nexusadspy)
+[![Build Status](https://travis-ci.org/markovianhq/nexusadspy.svg)](https://travis-ci.org/markovianhq/nexusadspy)
+
 ## Installation
 
-    pip install nexusadspy
+### Installation as regular library
+
+Install the latest release from PyPI:
+
+    $ pip install nexusadspy
+
+To install the latest `master` branch commit of nexusadspy:
+
+    $ pip install -e git+git@github.com:markovianhq/nexusadspy.git@master#egg=nexusadspy
+
+To install a specific commit, e.g. `97c41e9`:
+
+    $ pip install -e git+git@github.com:markovianhq/nexusadspy.git@97c41e9#egg=nexusadspy
+
+### Installation for development
+
+To install nexusadspy for local development you may want to create a virtual environment.
+Assuming you use [Continuum Anaconda](https://www.continuum.io/downloads), create
+a new virtual environment as follows:
+
+    $ conda create --name nexusadspy python=3 -y
+
+Activate the environment:
+
+    $ source activate nexusadspy
+
+Install the requirements:
+
+    $ pip install -y -r requirements.txt
+
+Now install nexusadspy in development mode:
+
+    $ python setup.py develop
+
+To run the tests, install these additional packages:
+
+    $ pip install -r requirements_test.txt
+
+Now run the tests:
+
+    $ py.test nexusadspy --flake8
 
 ## Examples
 
@@ -68,3 +115,30 @@ In case you have `pandas` installed you can also request the report as a
 dataframe as follows:
 
     output_df = report.get(format_='pandas')
+
+### Sample segments upload
+
+In the following example, we upload a list of users to user segment `my_segment_code`
+using the [batch segment upload service](https://wiki.appnexus.com/display/api/Batch+Segment+Service).
+We assume that the segment `my_segment_code` has already been created in the corresponding account.
+The respective users also need to be pixelled on AppNexus from your website before they can be added to segments.
+
+    from nexusadspy.segment import AppnexusSegmentsUploader
+
+    # List of five separators obtained from Appnexus support
+    my_separators_list = [':',';','^','~',',']
+
+    seg_code = "my_segment_code"
+    my_member_id = "1234"
+
+    members = [
+        {"uid": "0123456789012345678", "timestamp": "1447952642"},
+        {"uid": "9876543210987654321", "timestamp": "1447921128"},
+        {"uid": "1122334455667788990", "timestamp": "1447914439"}
+    ]
+
+    uploader = AppnexusSegmentsUploader(members, seg_code, my_spearators_list, my_member_id)
+
+To trigger the upload, run `upload()` method on `uploader`:
+
+    upload_status = uploader.upload()
