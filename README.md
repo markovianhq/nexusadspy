@@ -6,7 +6,7 @@ See usage examples below!
 
 ## Status
 
-[![Build Status](https://travis-ci.org/mathemads/nexusadspy.svg)](https://travis-ci.org/mathemads/nexusadspy)
+[![Build Status](https://travis-ci.org/markovianhq/nexusadspy.svg)](https://travis-ci.org/markovianhq/nexusadspy)
 
 ## Installation
 
