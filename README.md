@@ -6,6 +6,7 @@ See usage examples below!
 
 ## Status
 
+[![PyPI version](https://badge.fury.io/py/nexusadspy.svg)](https://badge.fury.io/py/nexusadspy)
 [![Build Status](https://travis-ci.org/markovianhq/nexusadspy.svg)](https://travis-ci.org/markovianhq/nexusadspy)
 
 ## Installation
