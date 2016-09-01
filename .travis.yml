@@ -26,6 +26,7 @@ script:
 
 after_success:
   - coveralls
+  - bash <(curl -s https://codecov.io/bash)
 
 deploy:
   provider: pypi
