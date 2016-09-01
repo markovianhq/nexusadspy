@@ -2,13 +2,56 @@
 
 A thin Python wrapper on top of the Appnexus API.
 
+See usage examples below!
+
 ## Status
 
-[![Build Status](https://travis-ci.org/mathemads/nexusadspy.svg)](https://travis-ci.org/mathemads/nexusadspy)
+[![PyPI version](https://badge.fury.io/py/nexusadspy.svg)](https://badge.fury.io/py/nexusadspy)
+[![Build Status](https://travis-ci.org/markovianhq/nexusadspy.svg)](https://travis-ci.org/markovianhq/nexusadspy)
 
 ## Installation
 
-    pip install nexusadspy
+### Installation as regular library
+
+Install the latest release from PyPI:
+
+    $ pip install nexusadspy
+
+To install the latest `devel` branch commit of nexusadspy:
+
+    $ pip install -e git+git@github.com:markovianhq/nexusadspy.git@devel#egg=nexusadspy
+
+To install a specific commit, e.g. `97c41e9`:
+
+    $ pip install -e git+git@github.com:markovianhq/nexusadspy.git@97c41e9#egg=nexusadspy
+
+### Installation for development
+
+To install nexusadspy for local development you may want to create a virtual environment.
+Assuming you use [Continuum Anaconda](https://www.continuum.io/downloads), create
+a new virtual environment as follows:
+
+    $ conda create --name nexusadspy python=3 -y
+
+Activate the environment:
+
+    $ source activate nexusadspy
+
+Install the requirements:
+
+    $ pip install -y -r requirements.txt
+
+Now install nexusadspy in development mode:
+
+    $ python setup.py develop
+
+To run the tests, install these additional packages:
+
+    $ pip install -r requirements_test.txt
+
+Now run the tests:
+
+    $ py.test nexusadspy --flake8
 
 ## Examples
 
