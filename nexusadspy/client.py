@@ -29,7 +29,7 @@ import requests
 logging.basicConfig(level=logging.INFO)
 
 
-class AppnexusClient():
+class AppnexusClient:
     endpoint = 'https://api.appnexus.com'
 
     def __init__(self, path):
