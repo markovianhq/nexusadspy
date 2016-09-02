@@ -8,6 +8,10 @@ See usage examples below!
 
 [![PyPI version](https://badge.fury.io/py/nexusadspy.svg)](https://badge.fury.io/py/nexusadspy)
 [![Build Status](https://travis-ci.org/markovianhq/nexusadspy.svg)](https://travis-ci.org/markovianhq/nexusadspy)
+[![codecov](https://codecov.io/gh/markovianhq/nexusadspy/branch/master/graph/badge.svg)]
+(https://codecov.io/gh/markovianhq/nexusadspy)
+[![Join the chat at https://gitter.im/markovianhq/Lobby](https://badges.gitter.im/markovianhq/Lobby.svg)]
+(https://gitter.im/markovianhq/Lobby)
 
 ## Installation
 
@@ -39,7 +43,7 @@ Activate the environment:
 
 Install the requirements:
 
-    $ pip install -y -r requirements.txt
+    $ pip install -r requirements.txt
 
 Now install nexusadspy in development mode:
 
@@ -49,6 +53,10 @@ To run the tests, install these additional packages:
 
     $ pip install -r requirements_test.txt
 
+In case you are on Python 2.7, install the `mock` package:
+
+    $ pip install mock
+
 Now run the tests:
 
     $ py.test nexusadspy --flake8
@@ -57,8 +65,19 @@ Now run the tests:
 
 Set your developer username and password in the environment:
 
-    $ export USERNAME_NEXUSADSPY="..."
-    $ export PASSWORD_NEXUSADSPY="..."
+    $ export USERNAME_NEXUSADSPY='...'
+    $ export PASSWORD_NEXUSADSPY='...'
+
+For convenience, place the above two lines in an environment file,
+e.g. `nexusadspy.env`:
+
+    # nexusadspy.env
+    export USERNAME_NEXUSADSPY='...'
+    export PASSWORD_NEXUSADSPY='...'
+
+And source this file as follows:
+
+    $ source nexusadspy.env
 
 ### Sample API service query
 
@@ -77,6 +96,19 @@ To download data on just one of your advertisers, simply pass their ID
 in the request:
 
     r = client.request('advertiser', 'GET', data={'id': 123456})
+
+Internally, `AppnexusClient` creates one session object and reuses
+it upon retries.
+Ideally, you would want to close the session when you are done with
+your client instance:
+
+    client.session.close()
+
+To close the session automatically, use `AppnexusClient` as a context manager:
+
+    from nexusadspy import AppnexusClient
+    with AppnexusClient('.appnexus_auth.json') as client:
+        r = client.request('advertiser', 'GET')
 
 ### Sample reporting query
 
