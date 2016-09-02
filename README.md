@@ -39,7 +39,7 @@ Activate the environment:
 
 Install the requirements:
 
-    $ pip install -y -r requirements.txt
+    $ pip install -r requirements.txt
 
 Now install nexusadspy in development mode:
 
