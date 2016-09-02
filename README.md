@@ -57,8 +57,19 @@ Now run the tests:
 
 Set your developer username and password in the environment:
 
-    $ export USERNAME_NEXUSADSPY="..."
-    $ export PASSWORD_NEXUSADSPY="..."
+    $ export USERNAME_NEXUSADSPY='...'
+    $ export PASSWORD_NEXUSADSPY='...'
+
+For convenience, place the above two lines in an environment file,
+e.g. `nexusadspy.env`:
+
+    # nexusadspy.env
+    export USERNAME_NEXUSADSPY='...'
+    export PASSWORD_NEXUSADSPY='...'
+
+And source this file as follows:
+
+    $ source nexusadspy.env
 
 ### Sample API service query
 
