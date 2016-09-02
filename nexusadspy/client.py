@@ -122,7 +122,7 @@ class AppnexusClient:
 
             start_element += batch_size
 
-            count = int(r.get('count', 0))
+            count = int(r.get('count', 0) or 0)
             if len(res[output_term]) >= count:
                 break
 
