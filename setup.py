@@ -8,13 +8,13 @@ except ImportError:
 
 setup(
     name='nexusadspy',
-    version='0.1.0',
+    version='0.2',
     description='Thin wrapper around AppNexus API',
     author='Daniel Olel, Georg Walther',
     author_email='daniel.olel@rocket-internet.com, '
                  'georg.walther@rocket-internet.com',
-    url='https://github.com/mathemads/nexusadspy',
-    download_url='https://github.com/mathemads/nexusadspy/tarball/master',
+    url='https://github.com/markovianhq/nexusadspy',
+    download_url='https://github.com/markovianhq/nexusadspy/tarball/master',
     packages=['nexusadspy'],
     package_dir={'nexusadspy': 'nexusadspy'},
     package_data={},

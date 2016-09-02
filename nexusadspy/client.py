@@ -29,11 +29,12 @@ import requests
 logging.basicConfig(level=logging.INFO)
 
 
-class AppnexusClient():
-    endpoint = 'https://api.appnexus.com'
+class AppnexusClient:
 
-    def __init__(self, path):
+    def __init__(self, path, endpoint='https://api.appnexus.com'):
         self.path = path
+        self.endpoint = endpoint
+        self._session = None
         self.logger = logging.getLogger('AppnexusClient')
 
     def request(self, service, method, params=None, data=None, headers=None,
@@ -78,6 +79,17 @@ class AppnexusClient():
             res = [res]
 
         return res
+
+    @property
+    def session(self):
+        self._session = self._session or requests.Session()
+        return self._session
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.session.close()
 
     def _do_paged_get(self, url, method, params=None, data=None, headers=None,
                       start_element=None, batch_size=None, max_items=None,
@@ -129,7 +141,7 @@ class AppnexusClient():
             data = json.dumps(data)
         no_fail = 0
         while True:
-            r = requests.request(method, url, params=params, data=data, headers=headers)
+            r = self.session.request(method, url, params=params, data=data, headers=headers)
             r_code = r.status_code
 
             try:
@@ -212,6 +224,8 @@ class AppnexusClient():
         url = urljoin(base=self.endpoint, url='auth')
 
         r_code, r = self._do_throttled_request(url, 'post', data=data, headers=headers)
+        self._check_response(r_code, r)
+
         token = r['token']
 
         return token
