@@ -89,6 +89,19 @@ in the request:
 
     r = client.request('advertiser', 'GET', data={'id': 123456})
 
+Internally, `AppnexusClient` creates one session object and reuses
+it upon retries.
+Ideally, you would want to close the session when you are done with
+your client instance:
+
+    client.session.close()
+
+To close the session automatically, use `AppnexusClient` as a context manager:
+
+    from nexusadspy import AppnexusClient
+    with AppnexusClient('.appnexus_auth.json') as client:
+        r = client.request('advertiser', 'GET')
+
 ### Sample reporting query
 
 In the following example we set up an `attributed_conversions` report
