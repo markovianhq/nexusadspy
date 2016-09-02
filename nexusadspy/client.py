@@ -34,6 +34,7 @@ class AppnexusClient:
     def __init__(self, path, endpoint='https://api.appnexus.com'):
         self.path = path
         self.endpoint = endpoint
+        self._session = None
         self.logger = logging.getLogger('AppnexusClient')
 
     def request(self, service, method, params=None, data=None, headers=None,
@@ -79,6 +80,17 @@ class AppnexusClient:
 
         return res
 
+    @property
+    def session(self):
+        self._session = self._session or requests.Session()
+        return self._session
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.session.close()
+
     def _do_paged_get(self, url, method, params=None, data=None, headers=None,
                       start_element=None, batch_size=None, max_items=None,
                       get_field=None):
@@ -110,7 +122,7 @@ class AppnexusClient:
 
             start_element += batch_size
 
-            count = int(r.get('count', 0))
+            count = int(r.get('count', 0) or 0)
             if len(res[output_term]) >= count:
                 break
 
@@ -129,7 +141,7 @@ class AppnexusClient:
             data = json.dumps(data)
         no_fail = 0
         while True:
-            r = requests.request(method, url, params=params, data=data, headers=headers)
+            r = self.session.request(method, url, params=params, data=data, headers=headers)
             r_code = r.status_code
 
             try:
