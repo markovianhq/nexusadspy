@@ -8,7 +8,11 @@ from __future__ import (
 import os
 
 import pytest
-from unittest.mock import patch
+
+try:
+    from unittest.mock import patch
+except ImportError:
+    from mock import patch
 
 from nexusadspy import AppnexusClient
 from nexusadspy.exceptions import NexusadspyConfigurationError

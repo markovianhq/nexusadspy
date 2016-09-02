@@ -49,6 +49,10 @@ To run the tests, install these additional packages:
 
     $ pip install -r requirements_test.txt
 
+In case you are on Python 2.7, install the `mock` package:
+
+    $ pip install mock
+
 Now run the tests:
 
     $ py.test nexusadspy --flake8
