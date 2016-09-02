@@ -8,6 +8,10 @@ See usage examples below!
 
 [![PyPI version](https://badge.fury.io/py/nexusadspy.svg)](https://badge.fury.io/py/nexusadspy)
 [![Build Status](https://travis-ci.org/markovianhq/nexusadspy.svg)](https://travis-ci.org/markovianhq/nexusadspy)
+[![codecov](https://codecov.io/gh/markovianhq/nexusadspy/branch/master/graph/badge.svg)]
+(https://codecov.io/gh/markovianhq/nexusadspy)
+[![Join the chat at https://gitter.im/markovianhq/Lobby](https://badges.gitter.im/markovianhq/Lobby.svg)]
+(https://gitter.im/markovianhq/Lobby)
 
 ## Installation
 
@@ -48,6 +52,10 @@ Now install nexusadspy in development mode:
 To run the tests, install these additional packages:
 
     $ pip install -r requirements_test.txt
+
+In case you are on Python 2.7, install the `mock` package:
+
+    $ pip install mock
 
 Now run the tests:
 
