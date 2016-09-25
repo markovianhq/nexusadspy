@@ -145,7 +145,9 @@ class AppnexusClient:
             r_code = r.status_code
 
             try:
+                headers = r.headers
                 r = r.json()['response']
+                r['headers'] = headers
             except (KeyError, ValueError):
                 if len(r.content) > 0:
                     r = self._convert_csv_to_dict(r.content, get_field)
