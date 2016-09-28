@@ -5,6 +5,6 @@ from __future__ import (
     absolute_import, unicode_literals
 )
 
-from nexusadspy.client import AppnexusClient
-from nexusadspy.report import AppnexusReport
-from nexusadspy.segment import AppnexusSegmentsUploader
+from nexusadspy.client import AppnexusClient  # NOQA
+from nexusadspy.report import AppnexusReport  # NOQA
+from nexusadspy.segment import AppnexusSegmentsUploader  # NOQA
