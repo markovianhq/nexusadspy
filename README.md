@@ -6,6 +6,8 @@ A thin Python wrapper on top of the Appnexus API.
 
 [![PyPI version](https://badge.fury.io/py/nexusadspy.svg)](https://badge.fury.io/py/nexusadspy)
 [![Build Status](https://travis-ci.org/markovianhq/nexusadspy.svg)](https://travis-ci.org/markovianhq/nexusadspy)
+[![Build status](https://ci.appveyor.com/api/projects/status/k7ameugn5qiksbum/branch/master?svg=true)]
+(https://ci.appveyor.com/project/waltherg/nexusadspy/branch/master)
 [![codecov](https://codecov.io/gh/markovianhq/nexusadspy/branch/master/graph/badge.svg)]
 (https://codecov.io/gh/markovianhq/nexusadspy)
 [![Join the chat at https://gitter.im/markovianhq/Lobby](https://badges.gitter.im/markovianhq/Lobby.svg)]
