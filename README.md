@@ -11,7 +11,7 @@ A thin Python wrapper on top of the Appnexus API.
 [![Join the chat at https://gitter.im/markovianhq/Lobby](https://badges.gitter.im/markovianhq/Lobby.svg)]
 (https://gitter.im/markovianhq/Lobby)
 [![Documentation Status](https://readthedocs.org/projects/nexusadspy/badge/?version=latest)]
-(http://nexusadspy.readthedocs.io/en/latest/?badge=latest)
+(https://nexusadspy.readthedocs.io/en/latest/?badge=latest)
 
 ## Installation
 
@@ -35,4 +35,4 @@ in the request:
 
     r = client.request('advertiser', 'GET', data={'id': 123456})
 
-See [the documentation](https://nexusadspy.readthedocs.org) for more examples.
+See [the documentation](https://nexusadspy.readthedocs.io) for more examples.
