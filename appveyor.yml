@@ -1,15 +1,28 @@
 environment:
   matrix:
-    - PYTHON: "C:\\Python27"
-    - PYTHON: "C:\\Python35"
-    - PYTHON: "C:\\Python27-x64"
-    - PYTHON: "C:\\Python35-x64"
+    - PYTHON_VERSION: 2.7
+      MINICONDA: C:\Miniconda
+    - PYTHON_VERSION: 2.7-x64
+      MINICONDA: C:\Miniconda-x64
+    - PYTHON_VERSION: 3.5
+      MINICONDA: C:\Miniconda3
+    - PYTHON_VERSION: 3.5
+      MINICONDA: C:\Miniconda3-x64
+
+init:
+  - "ECHO %PYTHON_VERSION% %MINICONDA%"
 
 install:
-  - "%PYTHON%/Scripts/pip.exe install -r requirements.txt"
-  - "%PYTHON%/Scripts/pip.exe install -r requirements_test.txt"
-  - "%PYTHON%/Scripts/pip.exe install mock"
-  - "%PYTHON%/Scripts/pip.exe install ."
+  - "set PATH=%MINICONDA%;%MINICONDA%\\Scripts;%PATH%"
+  - conda config --set always_yes yes --set changeps1 no
+  - conda update -q conda
+  - conda info -a
+  - "conda create -q -n test-environment python=%PYTHON_VERSION%"
+  - activate test-environment
+  - pip install -r requirements.txt
+  - pip install -r requirements_test.txt
+  - pip install mock
+  - pip install .
 
-build_script:
-  - "%CMD_IN_ENV% python -m pytest --flake8 nexusadspy"
+test_script:
+  - python -m pytest --flake8 nexusadspy
