@@ -8,6 +8,7 @@ environment:
 install:
   - "%PYTHON%/Scripts/pip.exe install -r requirements.txt"
   - "%PYTHON%/Scripts/pip.exe install -r requirements_test.txt"
+  - "%PYTHON%/Scripts/pip.exe install mock"
   - "%PYTHON%/Scripts/pip.exe install ."
 
 build_script:
