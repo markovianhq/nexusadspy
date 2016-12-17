@@ -10,8 +10,8 @@ A thin Python wrapper on top of the Appnexus API.
 (https://codecov.io/gh/markovianhq/nexusadspy)
 [![Join the chat at https://gitter.im/markovianhq/Lobby](https://badges.gitter.im/markovianhq/Lobby.svg)]
 (https://gitter.im/markovianhq/Lobby)
-[![readthedocs](https://readthedocs.org/projects/nexusadspy/badge/?version=latest)]
-(https://nexusadspy.readthedocs.org)
+[![Documentation Status](https://readthedocs.org/projects/nexusadspy/badge/?version=latest)]
+(http://nexusadspy.readthedocs.io/en/latest/?badge=latest)
 
 ## Installation
 
