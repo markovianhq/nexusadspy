@@ -92,8 +92,8 @@ class AppnexusSegmentsUploader:
         upload_string += str(self._segment_id) + self._separators[2]
         upload_string += str(user['timestamp']) + self._separators[2]
         upload_string += str(user.get('expiration', 0)) + self._separators[2]
-        upload_string += str(user.get('value', 0))
-        upload_string += str(user.get('member_id', 0))
+        upload_string += str(user.get('value', 0)) + self._separators[2]
+        upload_string += str(self._member_id) + self._separators[2]
         upload_string += str(user.get('seg_code', 0))
         user_mobile_os = user.get('mobile_os')
         if user_mobile_os is not None:
