@@ -172,7 +172,7 @@ class AppnexusClient:
 
     @staticmethod
     def _convert_csv_to_dict(csv_bytestr, field):
-        s = csv_bytestr.decode('utf-8')
+        s = csv_bytestr.decode('latin-1')
         headings, rows = s.split('\r\n')[0], s.split('\r\n')[1:]
         headings = [h.strip() for h in headings.split(',')]
         rows = (r for r in rows if len(r) > 0)
