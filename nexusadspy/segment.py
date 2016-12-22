@@ -89,12 +89,12 @@ class AppnexusSegmentsUploader:
 
     def _get_upload_string_for_user(self, user):
         upload_string = str(user['uid']) + self._separators[0]
-        upload_string += str(self._segment_id) + self._separators[2]
+        upload_string += '' + self._separators[2]  # Setting segment id to empty string
         upload_string += str(user['timestamp']) + self._separators[2]
         upload_string += str(user.get('expiration', 0)) + self._separators[2]
         upload_string += str(user.get('value', 0)) + self._separators[2]
         upload_string += str(self._member_id) + self._separators[2]
-        upload_string += str(user.get('seg_code', 0))
+        upload_string += str(self._segment_id)  # Feeding segment id as segment code
         user_mobile_os = user.get('mobile_os')
         if user_mobile_os is not None:
             if user_mobile_os.lower() == 'android':
