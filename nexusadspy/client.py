@@ -36,9 +36,11 @@ class AppnexusClient:
         self.endpoint = endpoint
         self._session = None
         self.logger = logging.getLogger('AppnexusClient')
+        self.request_args = None
+        self.request_kwargs = None
 
     def request(self, service, method, params=None, data=None, headers=None,
-                get_field=None, prepend_endpoint=True):
+                get_field=None, prepend_endpoint=True, *args, **kwargs):
         """
         Sends a request to the Appnexus API. Handles authentication, paging, and throttling.
 
@@ -49,6 +51,9 @@ class AppnexusClient:
         :param headers: dict (optional), Any HTTP headers to be sent in the request.
         :return: list, List of response dictionaries.
         """
+        self.request_args = args
+        self.request_kwargs = kwargs
+
         method = method.lower()
 
         params = params or {}
@@ -141,7 +146,8 @@ class AppnexusClient:
             data = json.dumps(data)
         no_fail = 0
         while True:
-            r = self.session.request(method, url, params=params, data=data, headers=headers)
+            r = self.session.request(method, url, params=params, data=data, headers=headers,
+                                     *self.request_args, **self.request_kwargs)
             r_code = r.status_code
 
             try:
@@ -237,7 +243,7 @@ class AppnexusClient:
             response = [response]
 
         for res in response:
-            if res.get('error_id') is not None or response_code != 200:
+            if res.get('error_id') is not None or response_code not in (200, 302):
                 raise NexusadspyAPIError('Response status code: "{}"'.format(response_code),
                                          res.get('error_id'),
                                          res.get('error'),
