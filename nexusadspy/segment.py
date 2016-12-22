@@ -88,6 +88,10 @@ class AppnexusSegmentsUploader:
         return compressed_buffer
 
     def _get_upload_string_for_user(self, user):
+        """
+        The upload string needs to follow the order that has been specified with AppNexus:
+        uid, seg_id, timestamp, expiration, value, member_id, seg_code
+        """
         upload_string = str(user['uid']) + self._separators[0]
         upload_string += '' + self._separators[2]  # Setting segment id to empty string
         upload_string += str(user['timestamp']) + self._separators[2]
