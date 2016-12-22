@@ -150,10 +150,10 @@ class AppnexusClient:
                                      *self.request_args, **self.request_kwargs)
             r_code = r.status_code
 
+            headers = r.headers
+
             try:
-                headers = r.headers
                 r = r.json()['response']
-                r['headers'] = headers
             except (KeyError, ValueError):
                 if len(r.content) > 0:
                     r = self._convert_csv_to_dict(r.content, get_field)
@@ -164,6 +164,8 @@ class AppnexusClient:
                 no_fail += 1
                 time.sleep(sec_sleep ** no_fail)
                 continue
+
+            r['headers'] = headers
 
             return r_code, r
 
