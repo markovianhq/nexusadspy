@@ -36,9 +36,11 @@ class AppnexusClient:
         self.endpoint = endpoint
         self._session = None
         self.logger = logging.getLogger('AppnexusClient')
+        self.request_args = None
+        self.request_kwargs = None
 
     def request(self, service, method, params=None, data=None, headers=None,
-                get_field=None, prepend_endpoint=True):
+                get_field=None, prepend_endpoint=True, *args, **kwargs):
         """
         Sends a request to the Appnexus API. Handles authentication, paging, and throttling.
 
@@ -49,6 +51,9 @@ class AppnexusClient:
         :param headers: dict (optional), Any HTTP headers to be sent in the request.
         :return: list, List of response dictionaries.
         """
+        self.request_args = args
+        self.request_kwargs = kwargs
+
         method = method.lower()
 
         params = params or {}
@@ -141,29 +146,33 @@ class AppnexusClient:
             data = json.dumps(data)
         no_fail = 0
         while True:
-            r = self.session.request(method, url, params=params, data=data, headers=headers)
+            r = self.session.request(method, url, params=params, data=data, headers=headers,
+                                     *self.request_args, **self.request_kwargs)
             r_code = r.status_code
 
+            headers = r.headers
+
             try:
-                headers = r.headers
                 r = r.json()['response']
-                r['headers'] = headers
             except (KeyError, ValueError):
                 if len(r.content) > 0:
                     r = self._convert_csv_to_dict(r.content, get_field)
                 else:
                     self._check_response(r_code, {})
+                    r = {}
 
             if no_fail < max_failures and r.get('error_code', '') == 'RATE_EXCEEDED':
                 no_fail += 1
                 time.sleep(sec_sleep ** no_fail)
                 continue
 
+            r['headers'] = headers
+
             return r_code, r
 
     @staticmethod
     def _convert_csv_to_dict(csv_bytestr, field):
-        s = csv_bytestr.decode('utf-8')
+        s = csv_bytestr.decode('latin-1')
         headings, rows = s.split('\r\n')[0], s.split('\r\n')[1:]
         headings = [h.strip() for h in headings.split(',')]
         rows = (r for r in rows if len(r) > 0)
@@ -237,7 +246,7 @@ class AppnexusClient:
             response = [response]
 
         for res in response:
-            if res.get('error_id') is not None or response_code != 200:
+            if res.get('error_id') is not None or response_code not in (200, 302):
                 raise NexusadspyAPIError('Response status code: "{}"'.format(response_code),
                                          res.get('error_id'),
                                          res.get('error'),
