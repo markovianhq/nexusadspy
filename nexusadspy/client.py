@@ -159,6 +159,7 @@ class AppnexusClient:
                     r = self._convert_csv_to_dict(r.content, get_field)
                 else:
                     self._check_response(r_code, {})
+                    r = {}
 
             if no_fail < max_failures and r.get('error_code', '') == 'RATE_EXCEEDED':
                 no_fail += 1
