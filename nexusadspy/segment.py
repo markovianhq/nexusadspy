@@ -17,7 +17,7 @@ class AppnexusSegmentsUploader:
     BATCH_UPLOAD_ANDROID_SPECIFIER = '8'
     BATCH_UPLOAD_IOS_SPECIFIER = '3'
 
-    def __init__(self, users_list, segment_id, separators, member_id,
+    def __init__(self, users_list, segment_code, separators, member_id,
                  credentials_path='.appnexus_auth.json'):
         """
         Batch-upload API wrapper for AppNexus.
@@ -27,7 +27,7 @@ class AppnexusSegmentsUploader:
             - expiration (optional): Expiration timestamp for the user. A POSIX timestamp. Defaults to 0.
             - value (optional): Numerical value for the segment. Defaults to 0.
             - mobile_os (optional): OS used by the user. Considered internally by AppNexus to be desktop if absent.
-        :param segment_id: str, Segment id to add users to.
+        :param segment_code: str, Segment code to add users to.
         :param separators: list, List of five field separators. As documented in
         https://wiki.appnexus.com/display/api/Batch+Segment+Service+-+File+Format#BatchSegmentService-FileFormat-Separators
         :param member_id: str, Member ID for AppNexus account.
@@ -36,7 +36,7 @@ class AppnexusSegmentsUploader:
         """
         self._credentials_path = credentials_path
         self._users_list = users_list
-        self._segment_id = segment_id  # Appnexus bug: Segment upload batch API does not work with segment IDs
+        self._segment_code = segment_code  # Appnexus bug: Segment upload batch API does not work with segment IDs
         self._separators = separators
         self._member_id = member_id
         self._logger = logging.getLogger('nexusadspy.segment')
@@ -98,7 +98,7 @@ class AppnexusSegmentsUploader:
         upload_string += str(user.get('expiration', 0)) + self._separators[2]
         upload_string += str(user.get('value', 0)) + self._separators[2]
         upload_string += str(self._member_id) + self._separators[2]
-        upload_string += str(self._segment_id)  # Feeding segment id as segment code
+        upload_string += str(self._segment_code)  # Feeding segment code
         user_mobile_os = user.get('mobile_os')
         if user_mobile_os is not None:
             if user_mobile_os.lower() == 'android':
