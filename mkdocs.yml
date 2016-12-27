@@ -1,0 +1,12 @@
+site_name: nexusadspy
+site_description: A thin Python wrapper on top of the Appnexus API
+site_author: Alexander Forstbach, Alexander Volkmann, Daniel Olel, Georg Walther
+
+theme: readthedocs
+
+repo_url: https://github.com/markovianhq/nexusadspy
+
+pages:
+- Home: index.md
+- Installation: installation.md
+- Usage: usage.md
