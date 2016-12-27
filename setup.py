@@ -8,7 +8,7 @@ except ImportError:
 
 setup(
     name='nexusadspy',
-    version='0.3.1',
+    version='0.3.2',
     description='Thin wrapper around AppNexus API',
     author='Daniel Olel, Georg Walther',
     author_email='daniel.olel@rocket-internet.com, '
