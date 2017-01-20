@@ -4,8 +4,9 @@ from __future__ import (
     absolute_import, unicode_literals
 )
 
-from io import BytesIO
 from gzip import GzipFile
+from io import BytesIO
+from itertools import groupby
 import time
 import logging
 
@@ -17,7 +18,7 @@ class AppnexusSegmentsUploader:
     BATCH_UPLOAD_ANDROID_SPECIFIER = '8'
     BATCH_UPLOAD_IOS_SPECIFIER = '3'
 
-    def __init__(self, users_list, segment_code, upload_string_order, separators, member_id,
+    def __init__(self, batch_file, upload_string_order, separators, member_id,
                  credentials_path='.appnexus_auth.json'):
         """
         Batch-upload API wrapper for AppNexus.
@@ -39,9 +40,8 @@ class AppnexusSegmentsUploader:
         :return:
         """
         self._credentials_path = credentials_path
-        self._users_list = users_list
+        self._batch_file = batch_file
         self._upload_string_order = upload_string_order
-        self._segment_code = segment_code  # Appnexus bug: Segment upload batch API does not work with segment IDs
         self._separators = separators
         self._member_id = member_id
         self._logger = logging.getLogger('nexusadspy.segment')
@@ -84,7 +84,8 @@ class AppnexusSegmentsUploader:
         return api_client.request(status_endpoint, 'GET', headers=headers)
 
     def _get_buffer_for_upload(self):
-        upload_string = '\n'.join(self._get_upload_string_for_user(user) for user in self._users_list)
+        upload_string = '\n'.join(
+            self._get_upload_string_for_user(uid, batch) for uid, batch in self._get_segment_batches(self._batch_file))
         self._logger.debug("Attempting to upload \n" + upload_string)
         compressed_buffer = BytesIO()
         with GzipFile(fileobj=compressed_buffer, mode='wb') as compressor:
@@ -92,19 +93,31 @@ class AppnexusSegmentsUploader:
         compressed_buffer.seek(0)
         return compressed_buffer
 
-    def _get_upload_string_for_user(self, user):
-        user['member_id'] = self._member_id
-        user['seg_code'] = self._segment_code
-        upload_string = str(user['uid']) + self._separators[0]
-        for item in self._upload_string_order:
-            upload_string += str(user.get(item, '0')) if not item == 'seg_id' else ''
-            upload_string += self._separators[2] if not item == self._upload_string_order[-1] else ''
-        user_mobile_os = user.get('mobile_os')
-        if user_mobile_os is not None:
-            if user_mobile_os.lower() == 'android':
+    def _get_segment_batches(self, batch_file):
+        sorted_batch_file = sorted(batch_file, key=lambda row: row['uid'])
+        for uid, batch in groupby(sorted_batch_file, key=lambda row: row['uid']):
+            yield uid, batch
+
+    def _get_upload_string_for_user(self, uid, batch):
+        upload_string = str(uid) + self._separators[0]
+        mobile_os = None
+        for line in batch:
+            line['member_id'] = self._member_id
+            for item in self._upload_string_order:
+                upload_string += str(line.get(item, '0')) if not item == 'seg_id' else '' # Appnexus bug: Segment upload batch API does not work with segment IDs
+                upload_string += self._separators[2]
+            upload_string = upload_string.strip(self._separators[2])
+            upload_string += self._separators[1]
+            try:
+                mobile_os = line['mobile_os']
+            except KeyError:
+                pass
+        upload_string = upload_string.strip(self._separators[1])
+        if mobile_os is not None:
+            if mobile_os.lower() == 'android':
                 # Appnexus bug: AAID should be uploaded as both IDFA and AAID. Otherwise it cannot be used in mopub.
                 upload_string = upload_string + self._separators[4] + self.BATCH_UPLOAD_ANDROID_SPECIFIER +\
                     "\n" + upload_string + self._separators[4] + self.BATCH_UPLOAD_IOS_SPECIFIER
-            elif user_mobile_os.lower() == 'ios':
+            elif mobile_os.lower() == 'ios':
                 upload_string = upload_string + self._separators[4] + self.BATCH_UPLOAD_IOS_SPECIFIER
         return upload_string
