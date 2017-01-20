@@ -17,9 +17,8 @@ def test_segment_upload_string_creation(segment_batch):
     separators = [';', ':', ',', '~', '^']
     member_id = 7007
 
-    uploader = AppnexusSegmentsUploader(
-            segment_batch, upload_string_order, separators, member_id
-        )
+    uploader = AppnexusSegmentsUploader(segment_batch, upload_string_order, separators, member_id)
+
     compressed_buffer = uploader._get_buffer_for_upload()
     with GzipFile(fileobj=compressed_buffer, mode='rb') as compressor:
         upload_string = compressor.read().decode('UTF-8')
