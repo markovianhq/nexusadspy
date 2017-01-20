@@ -17,7 +17,6 @@ def test_segment_upload_string_creation(segment_batch):
     separators = [';', ':', ',', '~', '^']
     member_id = 7007
 
-
     uploader = AppnexusSegmentsUploader(
             segment_batch, upload_string_order, separators, member_id
         )

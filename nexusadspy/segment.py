@@ -31,10 +31,10 @@ class AppnexusSegmentsUploader:
             - value (optional): Numerical value for the segment. Defaults to 0.
             - mobile_os (optional): OS used by the user. Considered internally by AppNexus to be desktop if absent.
         :param segment_code: str, Segment code to add users to.
-        :param upload_string_order: list, List specifying the order of inputs behind uid for the upload string. Possible values are
-        seg_id, timestamp, expiration, value, member_id, seg_code. Specify only one of: seg_id, seg_code
+        :param upload_string_order: list, List specifying the order of inputs behind uid for the upload string.
+            Possible values are seg_id, timestamp, expiration, value, member_id, seg_code.
         :param separators: list, List of five field separators. As documented in
-        https://wiki.appnexus.com/display/api/Batch+Segment+Service+-+File+Format#BatchSegmentService-FileFormat-Separators
+        https://wiki.appnexus.com/display/api/Batch+Segment+Service+-+File+Format
         :param member_id: str, Member ID for AppNexus account.
         :param credentials_path: str (optional), Credentials path for AppnexusClient. Defaults to '.appnexus_auth.json'.
         :return:
@@ -104,7 +104,7 @@ class AppnexusSegmentsUploader:
         for line in batch:
             line['member_id'] = self._member_id
             for item in self._upload_string_order:
-                upload_string += str(line.get(item, '0')) if not item == 'seg_id' else '' # Appnexus bug: Segment upload batch API does not work with segment IDs
+                upload_string += str(line.get(item, '0')) if not item == 'seg_id' else ''  # Appnexus bug
                 upload_string += self._separators[2]
             upload_string = upload_string.strip(self._separators[2])
             upload_string += self._separators[1]
