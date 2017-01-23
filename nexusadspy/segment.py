@@ -102,22 +102,31 @@ class AppnexusSegmentsUploader:
         upload_string = str(uid) + self._separators[0]
         mobile_os = None
         for line in batch:
-            line['member_id'] = self._member_id
-            for item in self._upload_string_order:
-                upload_string += str(line.get(item, '0')) if not item == 'seg_id' else ''  # Appnexus bug
-                upload_string += self._separators[2]
-            upload_string = upload_string.strip(self._separators[2])
-            upload_string += self._separators[1]
+            upload_string += self._get_upload_string_for_segment(line)
             try:
                 mobile_os = line['mobile_os']
             except KeyError:
                 pass
         upload_string = upload_string.strip(self._separators[1])
         if mobile_os is not None:
-            if mobile_os.lower() == 'android':
-                # Appnexus bug: AAID should be uploaded as both IDFA and AAID. Otherwise it cannot be used in mopub.
-                upload_string = upload_string + self._separators[4] + self.BATCH_UPLOAD_ANDROID_SPECIFIER +\
-                    "\n" + upload_string + self._separators[4] + self.BATCH_UPLOAD_IOS_SPECIFIER
-            elif mobile_os.lower() == 'ios':
-                upload_string = upload_string + self._separators[4] + self.BATCH_UPLOAD_IOS_SPECIFIER
+            upload_string = self._get_mobile_os_suffix(upload_string, mobile_os)
+        return upload_string
+
+    def _get_upload_string_for_segment(self, line):
+        line['member_id'] = self._member_id
+        segment_string = ''
+        for item in self._upload_string_order:
+            segment_string += str(line.get(item, '0')) if not item == 'seg_id' else ''  # Appnexus bug
+            segment_string += self._separators[2]
+        segment_string = segment_string.strip(self._separators[2])
+        segment_string += self._separators[1]
+        return segment_string
+
+    def _get_mobile_os_suffix(self, upload_string, mobile_os):
+        if mobile_os.lower() == 'android':
+            # Appnexus bug: AAID should be uploaded as both IDFA and AAID. Otherwise it cannot be used in mopub.
+            upload_string = upload_string + self._separators[4] + self.BATCH_UPLOAD_ANDROID_SPECIFIER + \
+                            "\n" + upload_string + self._separators[4] + self.BATCH_UPLOAD_IOS_SPECIFIER
+        elif mobile_os.lower() == 'ios':
+            upload_string = upload_string + self._separators[4] + self.BATCH_UPLOAD_IOS_SPECIFIER
         return upload_string
