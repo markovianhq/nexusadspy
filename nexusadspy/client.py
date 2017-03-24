@@ -31,9 +31,17 @@ logging.basicConfig(level=logging.INFO)
 
 class AppnexusClient:
 
-    def __init__(self, path, endpoint='https://api.appnexus.com'):
+    def __init__(self, path, endpoint='https://api.appnexus.com', mode='production'):
+        """
+        Client object that interacts with the AppNexus API.
+
+        :param path: str, Path to file where authentication info is stored by client.
+        :param endpoint: str, AppNexus API endpoint, defaults to production endpoint.
+        :param mode: str, Client mode either 'production' or 'development'.
+        """
         self.path = path
         self.endpoint = endpoint
+        self.mode = mode
         self._session = None
         self.logger = logging.getLogger('AppnexusClient')
         self.request_args = None
@@ -68,7 +76,14 @@ class AppnexusClient:
 
         url = urljoin(base=self.endpoint, url=service) if prepend_endpoint else service
 
-        if method == 'get':
+        if self.mode.lower() != 'production' and method != 'get':
+            res_code = 200
+            res = self._get_non_production_response()
+            self.logger.warn('In mode "{mode}" hence returning default response for your "{method}" request.'.format(
+                mode=self.mode,
+                method=method
+            ))
+        elif method == 'get':
             res_code, res = self._do_paged_get(url, method, params=params,
                                                data=data, headers=headers,
                                                get_field=get_field)
@@ -84,6 +99,16 @@ class AppnexusClient:
             res = [res]
 
         return res
+
+    def _get_non_production_response(self):
+        return {
+            'response': {
+                'status': 'ok',
+                'message': 'Nexusadspy AppnexusClient operating in non-production mode "{}".'.format(
+                    self.mode
+                )
+            }
+        }
 
     @property
     def session(self):
