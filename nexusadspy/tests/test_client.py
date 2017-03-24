@@ -87,7 +87,7 @@ def test_development_mode_get():
         method.return_value = (200, {})
         client.request('some_service', 'get')
 
-        method.assert_called()
+        assert method.call_count == 1
 
 
 def test_development_mode_non_get():
