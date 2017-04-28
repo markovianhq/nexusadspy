@@ -22,7 +22,7 @@ class AppnexusSegmentsUploader:
                  credentials_path='.appnexus_auth.json'):
         """
         Batch-upload API wrapper for AppNexus.
-        :param users_list: list, List of dictionaries representing AppNexus users. Every member should have fields
+        :param batch_file: list, List of dictionaries representing AppNexus users. Every member should have fields
             - uid: AppNexus user ID. AAID/IDFS in case of mobile. Always first in upload string.
             - timestamp: POSIX timestamp when user entered the segment.
             - segment_id (optional): int, Integer representing the segment id. Cannot be used at the same time as
@@ -30,7 +30,6 @@ class AppnexusSegmentsUploader:
             - expiration (optional): Expiration timestamp for the user. A POSIX timestamp. Defaults to 0.
             - value (optional): Numerical value for the segment. Defaults to 0.
             - mobile_os (optional): OS used by the user. Considered internally by AppNexus to be desktop if absent.
-        :param segment_code: str, Segment code to add users to.
         :param upload_string_order: list, List specifying the order of inputs behind uid for the upload string.
             Possible values are seg_id, timestamp, expiration, value, member_id, seg_code.
         :param separators: list, List of five field separators. As documented in
