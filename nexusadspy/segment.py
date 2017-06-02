@@ -99,12 +99,12 @@ class AppnexusSegmentsUploader:
         for line in batch:
             upload_string += self._get_upload_string_for_segments(line)
             device_id_field = self._get_mobile_device_id_field(line)
-            if device_id_field:
-                upload_string += self._separators[4] + device_id_field
-            if device_id_field == '8':
-                upload_string += '\n' + upload_string.strip('8') + '3'
-                # Appnexus bug: AAID should be uploaded as both IDFA and AAID. Otherwise it cannot be used in mopub.
         upload_string = upload_string.strip(self._separators[1])
+        if device_id_field:
+            upload_string += self._separators[4] + device_id_field
+        if device_id_field == '8':
+            upload_string += '\n' + upload_string.strip('8') + '3'
+            # Appnexus bug: AAID should be uploaded as both IDFA and AAID. Otherwise it cannot be used in mopub.
         return upload_string
 
     def _get_upload_string_for_segments(self, line):

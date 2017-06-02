@@ -10,7 +10,7 @@ def segment_batch():
         {'uid': 2, 'timestamp': 1278254459, 'expiration': 0, 'value': 0,
          'type': 'idfa', 'member_id': 7007, 'seg_id': 234, 'seg_code': '555'},
         {'uid': 2, 'timestamp': 1278250469, 'expiration': 223454,
-         'seg_id': 234, 'seg_code': '444', 'type': None},
+         'seg_id': 234, 'seg_code': '444', 'type': 'idfa'},
         {'uid': 3, 'timestamp': 1278232469, 'expiration': -1, 'type': 'aaid',
          'member_id': 7007, 'seg_id': 567, 'seg_code': '321'},
         {'uid': 4, 'timestamp': 1278211469, 'expiration': 12, 'value': 20,
