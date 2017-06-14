@@ -19,11 +19,12 @@ def test_init_report():
     assert rep.endpoint == "report"
     assert rep.request == {
         'report': {
+            'report_interval': 'lifetime',
             'columns': ['one'],
             'filters': [],
             'groups': [],
             'report_type': 'foo',
             'special_pixel_reporting': False,
             'timezone': 'CET'
-        },
-        'report_interval': 'lifetime'}
+        }
+    }
