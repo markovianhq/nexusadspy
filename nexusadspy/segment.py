@@ -22,8 +22,6 @@ class AppnexusSegmentsUploader:
         :param batch_file: list, List of dictionaries representing AppNexus users. Every member should have fields
             - uid: AppNexus user ID. AAID/IDFS in case of mobile. Always first in upload string.
             - timestamp: POSIX timestamp when user entered the segment.
-            - segment_id (optional): int, Integer representing the segment id. Cannot be used at the same time as
-              segment code.
             - expiration (optional): Expiration timestamp for the user. A POSIX timestamp. Defaults to 0.
             - value (optional): Numerical value for the segment. Defaults to 0.
             - mobile_os (optional): OS used by the user. Considered internally by AppNexus to be desktop if absent.
@@ -89,7 +87,8 @@ class AppnexusSegmentsUploader:
         compressed_buffer.seek(0)
         return compressed_buffer
 
-    def _get_segment_batches(self, batch_file):
+    @staticmethod
+    def _get_segment_batches(batch_file):
         sorted_batch_file = sorted(batch_file, key=lambda row: row['uid'])
         for uid, batch in groupby(sorted_batch_file, key=lambda row: row['uid']):
             yield uid, batch
@@ -117,7 +116,8 @@ class AppnexusSegmentsUploader:
         segment_string += self._separators[1]
         return segment_string
 
-    def _get_mobile_device_id_field(self, line):
+    @staticmethod
+    def _get_mobile_device_id_field(line):
         device_id_type = line['type']
         if device_id_type == 'idfa':
             return '3'
