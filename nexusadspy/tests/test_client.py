@@ -78,3 +78,24 @@ def test_wrong_http_methods():
         client.request("bar", "wget")
         assert excinfo.value.lower() == 'Argument "method" must be one of ' \
             '["get", "post", "put", "delete"]. You supplied: "wget".'
+
+
+def test_development_mode_get():
+    client = AppnexusClient("foo", mode='development')
+
+    with patch.object(AppnexusClient, '_do_paged_get') as method:
+        method.return_value = (200, {})
+        client.request('some_service', 'get')
+
+        assert method.call_count == 1
+
+
+def test_development_mode_non_get():
+    client = AppnexusClient("foo", mode='development')
+    methods = ['post', 'put', 'delete']
+
+    for method in methods:
+        res = client.request('some_service', method)
+
+        assert res[0]['response']['status'] == 'ok'
+        assert 'development' in res[0]['response']['message']
