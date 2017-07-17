@@ -10,7 +10,6 @@ def test_segment_upload_string_creation(segment_batch):
         'seg_id',
         'expiration',
         'value',
-        'seg_code',
         'member_id'
     ]
 
@@ -23,9 +22,9 @@ def test_segment_upload_string_creation(segment_batch):
     with GzipFile(fileobj=compressed_buffer, mode='rb') as compressor:
         upload_string = compressor.read().decode('UTF-8')
 
-    expected_user_1 = '1;1278250469,,48,42,123,7007'
-    expected_user_2 = '2;1278254459,,0,0,555,7007:1278250469,,223454,0,444,7007^3'
-    expected_user_3 = '3;1278232469,,-1,0,321,7007^8\n3;1278232469,,-1,0,321,7007^3'
-    expected_user_4 = '4;1278211469,,12,20,456,7007:1278431469,,21,10,777,7007'
+    expected_user_1 = '1;1278250469,123,48,42,7007'
+    expected_user_2 = '2;1278254459,444,0,0,7007:1278250469,555,223454,0,7007^3'
+    expected_user_3 = '3;1278232469,321,-1,0,7007^8\n3;1278232469,321,-1,0,7007^3'
+    expected_user_4 = '4;1278211469,777,12,20,7007:1278431469,890,21,10,7007'
 
     assert upload_string == '\n'.join([expected_user_1, expected_user_2, expected_user_3, expected_user_4])
