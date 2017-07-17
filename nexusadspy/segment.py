@@ -4,8 +4,9 @@ from __future__ import (
     absolute_import, unicode_literals
 )
 
-from io import BytesIO
 from gzip import GzipFile
+from io import BytesIO
+from itertools import groupby
 import time
 import logging
 
@@ -14,29 +15,27 @@ from nexusadspy.client import AppnexusClient
 
 class AppnexusSegmentsUploader:
 
-    BATCH_UPLOAD_ANDROID_SPECIFIER = '8'
-    BATCH_UPLOAD_IOS_SPECIFIER = '3'
-
-    def __init__(self, users_list, segment_code, separators, member_id,
+    def __init__(self, batch_file, upload_string_order, separators, member_id,
                  credentials_path='.appnexus_auth.json'):
         """
         Batch-upload API wrapper for AppNexus.
-        :param users_list: list, List of dictionaries representing AppNexus users. Every member should have fields
-            - uid: AppNexus user ID. AAID/IDFS in case of mobile.
+        :param batch_file: list, List of dictionaries representing AppNexus users. Every member should have fields
+            - uid: AppNexus user ID. AAID/IDFS in case of mobile. Always first in upload string.
             - timestamp: POSIX timestamp when user entered the segment.
             - expiration (optional): Expiration timestamp for the user. A POSIX timestamp. Defaults to 0.
             - value (optional): Numerical value for the segment. Defaults to 0.
             - mobile_os (optional): OS used by the user. Considered internally by AppNexus to be desktop if absent.
-        :param segment_code: str, Segment code to add users to.
+        :param upload_string_order: list, List specifying the order of inputs behind uid for the upload string.
+            Possible values are seg_id, timestamp, expiration, value, member_id, seg_code.
         :param separators: list, List of five field separators. As documented in
-        https://wiki.appnexus.com/display/api/Batch+Segment+Service+-+File+Format#BatchSegmentService-FileFormat-Separators
+        https://wiki.appnexus.com/display/api/Batch+Segment+Service+-+File+Format
         :param member_id: str, Member ID for AppNexus account.
         :param credentials_path: str (optional), Credentials path for AppnexusClient. Defaults to '.appnexus_auth.json'.
         :return:
         """
         self._credentials_path = credentials_path
-        self._users_list = users_list
-        self._segment_code = segment_code  # Appnexus bug: Segment upload batch API does not work with segment IDs
+        self._batch_file = batch_file
+        self._upload_string_order = upload_string_order
         self._separators = separators
         self._member_id = member_id
         self._logger = logging.getLogger('nexusadspy.segment')
@@ -79,7 +78,8 @@ class AppnexusSegmentsUploader:
         return api_client.request(status_endpoint, 'GET', headers=headers)
 
     def _get_buffer_for_upload(self):
-        upload_string = '\n'.join(self._get_upload_string_for_user(user) for user in self._users_list)
+        upload_string = '\n'.join(
+            self._get_upload_string(uid, batch) for uid, batch in self._get_segment_batches(self._batch_file))
         self._logger.debug("Attempting to upload \n" + upload_string)
         compressed_buffer = BytesIO()
         with GzipFile(fileobj=compressed_buffer, mode='wb') as compressor:
@@ -87,18 +87,49 @@ class AppnexusSegmentsUploader:
         compressed_buffer.seek(0)
         return compressed_buffer
 
-    def _get_upload_string_for_user(self, user):
-        upload_string = str(user['uid']) + self._separators[0]
-        upload_string += str(self._segment_code) + self._separators[2]
-        upload_string += str(user.get('expiration', 0)) + self._separators[2]
-        upload_string += str(user['timestamp']) + self._separators[2]
-        upload_string += str(user.get('value', 0))
-        user_mobile_os = user.get('mobile_os')
-        if user_mobile_os is not None:
-            if user_mobile_os.lower() == 'android':
-                # Appnexus bug: AAID should be uploaded as both IDFA and AAID. Otherwise it cannot be used in mopub.
-                upload_string = upload_string + self._separators[4] + self.BATCH_UPLOAD_ANDROID_SPECIFIER +\
-                    "\n" + upload_string + self._separators[4] + self.BATCH_UPLOAD_IOS_SPECIFIER
-            elif user_mobile_os.lower() == 'ios':
-                upload_string = upload_string + self._separators[4] + self.BATCH_UPLOAD_IOS_SPECIFIER
+    @staticmethod
+    def _get_segment_batches(batch_file):
+        sorted_batch_file = sorted(batch_file, key=lambda row: row['uid'])
+        for uid, batch in groupby(sorted_batch_file, key=lambda row: row['uid']):
+            yield uid, batch
+
+    def _get_upload_string(self, uid, batch):
+        upload_string = str(uid) + self._separators[0]
+        for line in batch:
+            upload_string += self._get_upload_string_for_segments(line)
+            device_id_field = self._get_mobile_device_id_field(line)
+        upload_string = upload_string.strip(self._separators[1])
+        if device_id_field:
+            upload_string += self._separators[4] + device_id_field
+        if device_id_field == '8':
+            upload_string += '\n' + upload_string.strip('8') + '3'
+            # Appnexus bug: AAID should be uploaded as both IDFA and AAID. Otherwise it cannot be used in mopub.
         return upload_string
+
+    def _get_upload_string_for_segments(self, line):
+        line['member_id'] = self._member_id
+        segment_string = ''
+        for item in self._upload_string_order:
+            segment_string += str(line.get(item, '0'))
+            segment_string += self._separators[2]
+        segment_string = segment_string.strip(self._separators[2])
+        segment_string += self._separators[1]
+        return segment_string
+
+    @staticmethod
+    def _get_mobile_device_id_field(line):
+        device_id_type = line['type']
+        if device_id_type == 'idfa':
+            return '3'
+        elif device_id_type == 'sha1udid':
+            return '4'
+        elif device_id_type == 'md5udid':
+            return '5'
+        elif device_id_type == 'sha1mac':
+            return '6'
+        elif device_id_type == 'openudid':
+            return '7'
+        elif device_id_type == 'aaid':
+            return '8'
+        elif device_id_type == 'windowsadid':
+            return '9'
