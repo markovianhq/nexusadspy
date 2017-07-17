@@ -111,7 +111,7 @@ class AppnexusSegmentsUploader:
         line['member_id'] = self._member_id
         segment_string = ''
         for item in self._upload_string_order:
-            segment_string += str(line.get(item, '0')) if not item == 'seg_id' else ''  # Appnexus bug
+            segment_string += str(line.get(item, '0'))
             segment_string += self._separators[2]
         segment_string = segment_string.strip(self._separators[2])
         segment_string += self._separators[1]
