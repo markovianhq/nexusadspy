@@ -118,7 +118,7 @@ class AppnexusSegmentsUploader:
 
     @staticmethod
     def _get_mobile_device_id_field(line):
-        device_id_type = line['type']
+        device_id_type = line.get('type', None)
         if device_id_type == 'idfa':
             return '3'
         elif device_id_type == 'sha1udid':
