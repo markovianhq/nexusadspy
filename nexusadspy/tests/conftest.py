@@ -16,6 +16,6 @@ def segment_batch():
         {'uid': 4, 'timestamp': 1278211469, 'expiration': 12, 'value': 20,
          'type': None, 'member_id': 7007, 'seg_id': 777},
         {'uid': 4, 'timestamp': 1278431469, 'expiration': 21, 'value': 10,
-         'type': None, 'member_id': 7007, 'seg_id': 890}
+         'member_id': 7007, 'seg_id': 890}
     ]
     return segment_batch
