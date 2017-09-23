@@ -31,17 +31,21 @@ logging.basicConfig(level=logging.INFO)
 
 class AppnexusClient:
 
-    def __init__(self, path, endpoint='https://api.appnexus.com', mode='production'):
+    def __init__(self, path, endpoint='https://api.appnexus.com', mode='production', username=None, password=None):
         """
         Client object that interacts with the AppNexus API.
 
         :param path: str, Path to file where authentication info is stored by client.
         :param endpoint: str, AppNexus API endpoint, defaults to production endpoint.
         :param mode: str, Client mode either 'production' or 'development'.
+        :param username: str, Username for API access.
+        :param password: str, Password for API access.
         """
         self.path = path
         self.endpoint = endpoint
         self.mode = mode
+        self.username = username
+        self.password = password
         self._session = None
         self.logger = logging.getLogger('AppnexusClient')
         self.request_args = None
@@ -245,15 +249,7 @@ class AppnexusClient:
             return auth['token']
 
     def _get_new_auth_token(self):
-        try:
-            username = os.environ['USERNAME_NEXUSADSPY']
-            password = os.environ['PASSWORD_NEXUSADSPY']
-        except KeyError as e:
-            raise NexusadspyConfigurationError(
-                'Set environment variables "USERNAME_NEXUSADSPY" and '
-                '"PASSWORD_NEXUSADSPY" appropriately. '
-                'You failed to set: "{}".'.format(e.args[0])
-            )
+        username, password = self._get_username_password()
 
         data = {'auth': {'username': username, 'password': password}}
         headers = {'Content-type': 'application/json; charset=UTF-8'}
@@ -265,6 +261,20 @@ class AppnexusClient:
         token = r['token']
 
         return token
+
+    def _get_username_password(self):
+        if self.username and self.password:
+            return self.username, self.password
+        else:
+            try:
+                return os.environ['USERNAME_NEXUSADSPY'], os.environ['PASSWORD_NEXUSADSPY']
+            except KeyError as e:
+                raise NexusadspyConfigurationError(
+                    'Either pass arguments "username" and "password" or '
+                    'set environment variables "USERNAME_NEXUSADSPY" and '
+                    '"PASSWORD_NEXUSADSPY" appropriately. '
+                    'You failed to set environment variables: "{}".'.format(e.args[0])
+                )
 
     def _check_response(self, response_code, response):
         if not isinstance(response, list):
