@@ -174,9 +174,9 @@ class AppnexusReport():
             r['report']['start_date'] = self.start_date
             r['report']['end_date'] = self.end_date
         elif self.report_interval:
-            r['report_interval'] = self.report_interval
+            r['report']['report_interval'] = self.report_interval
         else:
-            r['report_interval'] = 'lifetime'
+            r['report']['report_interval'] = 'lifetime'
 
         return r
 
